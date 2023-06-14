@@ -242,7 +242,7 @@ print("Scaled Linear SVM Accuracy:",metrics.accuracy_score(y_test, y_pred))
 #%% What is a good value for C  for  rbf
 
 # Do the sam experimentation as above, but with the `rbf` kernel
-mdl5=svm.SVC(kernel='rbf',C=9)
+mdl5=svm.SVC(kernel='rbf',C=.722)
 
 # Insert code lines here that will fit, then predict, then evaluate
 # use the scaled data
@@ -360,4 +360,52 @@ scaler_pd.fit(X_train) # fit the scaler to the test data
 X_train_sc_pd=scaler_pd.transform(X_train)
 X_test_sc_pd=scaler_pd.transform(X_test)
 
+# %% Using Bayesian search for parameter
+from skopt import BayesSearchCV
+
+from skopt.space import Real, Integer
+from skopt.utils import use_named_args
+from sklearn.model_selection import cross_val_score
+
+
+# %% continuous parameters
+params = dict()
+params['C'] = (1e-1, 100.0, 'uniform')
+
+
+
+
+# %%
+# define evaluation
+from sklearn.model_selection import RepeatedStratifiedKFold
+from skopt import BayesSearchCV
+
+cv = RepeatedStratifiedKFold(n_splits=10, n_repeats=10, random_state=1)
+# define the search
+search = BayesSearchCV(estimator=svm.SVC(), search_spaces=params, n_jobs=20, cv=cv,scoring="f1")
+
+# %%
+...
+# perform the search
+search.fit(X_train_sc_pd, y_train)
+# report the best result
+#print(search.best_score_)
+#print(search.best_params_)
+# %%
+print(search.best_score_)
+print(search.best_params_)
+# %%
+y_pred=search.predict(X_test_sc_pd)
+print("Scaled Linear SVM Accuracy:",metrics.accuracy_score(y_test, y_pred))
+# %%
+mdl7=svm.SVC(kernel='rbf',C=2.13)
+
+
+from sklearn.model_selection import cross_val_score
+
+scores = cross_val_score(
+    mdl7, X_train_sc, y_train, cv=cv, scoring='f1')
+print(np.mean(scores))
+# %%
+np.mean(scores)
 # %%
