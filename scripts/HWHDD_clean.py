@@ -50,8 +50,8 @@ Cleveland Heart Disease Data
 
 """ 
 
-dfCleve=pd.read_csv("data/cleve.txt", header=None,skiprows=20,sep='\s+')
-dfProcessed=pd.read_csv("data/processed.cleveland.data", header=None)
+dfCleve=pd.read_csv("cleve.txt", header=None,skiprows=20,sep='\s+')
+dfProcessed=pd.read_csv("processed.cleveland.data", header=None)
 
 #%%  Task 1a   
 """ ACTION REQUIRED: Write code that looks at the first 5 rows of each dataset
@@ -60,8 +60,8 @@ that you have correctly loaded the data
 """ 
 
 # Insert code below
-print(dfCleve.head(5))
-print(dfProcessed.head(5))
+
+
 
 #%% Task 2a  Convert from dfCleve to dfProcessed
 
@@ -69,12 +69,13 @@ print(dfProcessed.head(5))
 
 # inspect the object before we start
 dfCleve.dtypes
-dfCleve.describe()
-"""
-    ACTION REQUIRED:  Which fields are already numeric?
 
-    * Your answer here
-    Columns 0,3,4,7,9 are numeric
+"""
+ACTION REQUIRED:  Which fields are already numeric?
+
+* Your answer here
+
+
 
 """
 
@@ -107,9 +108,9 @@ dfCP[8]=le.fit_transform(dfCleve[8])
 
              fit_transform() 
              
+achieves.
 
-
-* `fit_transform()` method fits a transformer to the data and ALSO transforms that data under the same method.   It combines `fit` and `transform` into a single call on its input            
+* YOUR ANSWER HERE             
 """
 
 
@@ -132,21 +133,6 @@ desired mappings, then write code that achieves that mapping for columns
 
 INSERT CODE BELOW.
 """
-#resting ecg (norm, abn, hyper)  restecg (0,1,2);
-dfCP[6]=dfCleve[6].map({'norm':0,'abn':1,'hyp':2})
-
-# slope (up, flat, down) ; slope (1,2,3)
-dfCP[10]=dfCleve[10].map({'up':1,'flat':2,'down':3}) 
-
-#thal (norm, fixed, rever)  ; thal (3,6,7)
-dfCP[12]=dfCleve[12].map({'norm':3,'fix':6,'rev':7}) 
-
-# column 14 class attribute
-dfCP[14]=dfCleve[14].map({'H':0,'S1':1,'S2':2,'S3':3,'S4':4})
-
-
-
-
 
 #%%  2c continued  
 
@@ -160,7 +146,7 @@ dfCP.drop(columns=13,inplace=True)
 """
 ACTION REQUIRED:  Why do we need the option "inplace=True"?
 
-* With inplace=True, the `drop` method drops the column from the existing object
+* YOUR ANSWER HERE
 
 """
 
@@ -182,18 +168,13 @@ As we have discussed - one-hot encoding is often an "obvious" need.
 Consequently, pandas includes a dataframe method to covert categrorical variables
 to one-hot encoded dummy variables.
 """
-dfCP[11]=pd.to_numeric(dfCP[11],errors='coerce')
-dfa=dfCleve.replace({'?': np.nan})
-dfOnehot=pd.get_dummies(dfa.dropna())
+
+dfOnehot=pd.get_dummies(dfCleve.dropna())
 
 #%% Task 4 Scaling of numeric variables
 
-# added line
-dfOnehot.columns=dfOnehot.columns.astype(str)
-
-
-
 # let's use MinMax to scale to unit output using 
+
 scaler=sklp.MinMaxScaler()
 
 scaler.fit(dfOnehot) # fit the scaler to the test data
@@ -209,10 +190,6 @@ Above, I used the MinMax scaler.
 
 ** YOUR ANSWER HERE **
 
-(a) MaxAbsScaler, StandardScaler, RobustScaler
-
-(b) MinMaxScaler scales each variable to a given range, while StandardScaler "standarizes" each variable to mean 0, std=1.
-
 """
 
 
@@ -227,8 +204,6 @@ What metric do you thing is most appropriate for this evaluation?
 Provide a short justification for your choice.
 
 ** YOUR ANSWER HERE **
-
-Without a stated preference for positives over negatives, perhaps accuracy is a good choice.
 
 """
 
@@ -264,8 +239,6 @@ Provide a brief explanation of what is accomplished by the line
 to include the meaning of the parameter choice  "cv=10"
 
 ** YOUR ANSWER HERE **
-Using mdl1, with input data X to predict output y, use 10-fold cross validation (10 folds based on cv=10) to estimate accuracy.
-
 
 """
 
@@ -281,7 +254,7 @@ is somewhat different.
 
 Justify/explain what I am doing.
 
-** I am selecting all the predictor variables (from first feature up to the feature labeled `12_rev`.   For the output, choosing `13_sick` >0 identifies the positive class as those with heart disease, as a boolean. **
+** YOUR ANSWER HERE **
 
 """
 
@@ -295,19 +268,16 @@ scores = cross_val_score(mdl1, X, y, cv=10)
 """
 
 # INSERT CODE HERE
-np.mean(scores)
+
 
 #%% onehot and scaling
 df1=scaler.transform(dfOnehot.copy()) # operate on a copy, not original data
 
 
 # EDIT THE CODE BELOW
-scaler=sklp.MinMaxScaler().set_output(transform="pandas")
-df1=scaler.fit_transform(dfOnehot.copy()) # fit the scaler to the test data
-X=df1.loc[:,:'12_rev']
-y=(df1['13_sick']>0)
-#X=df1[:,:28]
-#y=(df1[:,29]>0)
+X=df1[:,????]
+y=(df1[:,????]>0)
+
 """ Correct the code above so that it selects the appropriate columns """
 
 
@@ -323,8 +293,8 @@ np.mean(scores)
 df1=dfCP.dropna()
 
 #  EDIT CODE BELOW TO PROPERLY SELECT PREDICTOR AND RESPONSE
-X=df1.iloc[:,:12]
-y=df1[:,14]
+X=???
+y=???
 
 scaler2=sklp.MinMaxScaler()
 
@@ -348,7 +318,7 @@ values of parameters.
 Explain why it would be appropriate to tune the parameter for each dataset
 before making accuracy comparisons.
 
-** If you don't tune hyperparameters, then the accuracy (of any particular dataset) may be driven by whether the default hyperpamaters are good, rather than by the data.   We want to compare the effect of `feature selection and scaling`, so we should do so AFTER we choose the best hyperparameter for that dataset.
+** YOUR ANSWER HERE.
 
 
 """
@@ -362,15 +332,9 @@ the built in capability to find good parameters.
 
 from sklearn.model_selection import GridSearchCV
 
-
-scaler=sklp.MinMaxScaler().set_output(transform="pandas")
-df1=scaler.fit_transform(dfOnehot.copy()) # fit the scaler to the test data
-X=df1.loc[:,:'12_rev']
-y=(df1['13_sick']>0)
-
-# df1=scaler.transform(dfOnehot.copy())
-# X=df1[:,0:30]
-# y=(df1[:,31]>0)
+df1=scaler.transform(dfOnehot.copy())
+X=df1[:,0:30]
+y=(df1[:,31]>0)
 
 Cs = [0.001, 0.01, 0.1, 1, 10,100]
 gammas = [0.001, 0.01,.05, 0.1, .15,  1]
