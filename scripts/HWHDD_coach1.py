@@ -50,8 +50,8 @@ Cleveland Heart Disease Data
 
 """ 
 
-dfCleve=pd.read_csv("data/cleve.txt", header=None,skiprows=20,sep='\s+')
-dfProcessed=pd.read_csv("data/processed.cleveland.data", header=None)
+dfCleve=pd.read_csv("../data/cleve.txt", header=None,skiprows=20,sep='\s+')
+dfProcessed=pd.read_csv("../data/processed.cleveland.data", header=None)
 
 #%%  Task 1a   
 """ ACTION REQUIRED: Write code that looks at the first 5 rows of each dataset
@@ -380,6 +380,7 @@ my_search = GridSearchCV(svm.SVC(kernel='rbf'), param_grid, cv=10)
 my_search.fit(X, y)
 print(my_search.best_params_)
 print(my_search.best_score_)
+
 
 """
 Modify Cs and gammas to identify what you think are good choices for these
